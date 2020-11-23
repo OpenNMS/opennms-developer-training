@@ -1,13 +1,14 @@
 # Events
 
-
 ## Goal
 
 ## Lecture
 
 ![eventd](images/eventd.png)
 
-TODO: Eventconf and pre-processing i.e. create transaction or not
+TODO: Eventconf and pre-processing
+
+TODO: Review how patterns are optimized i.e. create transaction or not
 
 ## Lab
 

@@ -2,9 +2,9 @@
 
 ## Goal
 
+Understand how the components of the stack communicate.
 
-TODO: How communications are secured.
-
+Understand how the communications are secured.
 
 ### Sink API
 

@@ -2,6 +2,7 @@
 
 ## Goal 
 
+Understand how to write applications that interact with OpenNMS via Kafka.
 
 ## Lecture
 
@@ -9,7 +10,6 @@
 
 TODO: Add topic map that describe payload types (k,v)
 Mapping on keys from one to another when applicable
-
 
 ### Input - Events
 
@@ -24,5 +24,6 @@ Mapping on keys from one to another when applicable
 ### Output - Flows
 
 ## Lab
+
 Python producer & consumer
 Leverage: https://github.com/j-white/ouce2018-oip
