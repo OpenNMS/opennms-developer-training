@@ -1,0 +1,24 @@
+digraph G {
+ 
+  commonContext -> soaContext;
+  daemonContext -> commonContext;
+  daoContext -> daemonContext;
+  eventDaemonContext -> daoContext;
+  pollerConfigContext -> daoContext;
+  thresholdingContext -> pollerConfigContext;
+  collectdContext -> thresholdingContext;
+  notifdContext -> pollerConfigContext;
+  pollerdContext -> thresholdingContext;
+  statisticsDaemonContext -> daoContext;
+  queuedContext -> daoContext;
+  webContext -> thresholdingContext;
+  
+  eventDaemonContext [shape=box];
+  collectdContext [shape=box];
+  notifdContext [shape=box];
+  pollerdContext [shape=box];
+  statisticsDaemonContext [shape=box];
+  queuedContext [shape=box];
+  webContext [shape=diamond];
+
+}

@@ -68,11 +68,9 @@ Let's take the the `eventd` service as defined in `service-configuration.xml` as
 
 During startup, we first (at pass=0) call `org.opennms.netmgt.eventd.jmx.Eventd#init` and then subsequently call `org.opennms.netmgt.eventd.jmx.Eventd#start`.
 
-The `org.opennms.netmgt.eventd.jmx.Eventd` extends `org.opennms.netmgt.daemon.AbstractSpringContextJmxServiceDaemon` and most of the logic is implemented in this base class. 
+The `org.opennms.netmgt.eventd.jmx.Eventd` extends `org.opennms.netmgt.daemon.AbstractSpringContextJmxServiceDaemon` and most of the logic is implemented in this base class.
 
-TODO: Fix classpath syntax
-
-The call to `BeanUtils#getFactory` ends up loading the `eventDaemonContext` defined in `classpath*://beanRefContext.xml`. This depends on the `daoContext`, which also gets in a similar fashion:
+The call to `BeanUtils#getFactory` ends up loading the `eventDaemonContext` defined in `classpath*:/beanRefContext.xml`. This depends on the `daoContext`, which also gets in a similar fashion:
 ```
 <bean id="eventDaemonContext" class="org.springframework.context.support.ClassPathXmlApplicationContext">
    <constructor-arg>
@@ -85,17 +83,45 @@ The call to `BeanUtils#getFactory` ends up loading the `eventDaemonContext` defi
 </bean>
 ```
 
-TODO: Diagram that shows the hierarchy of Spring contexts.
+The hiearchy of Spring contexts looks like:
+![comprehensive](images/spring-context-dep-graph.png)
 
-### 3) Jetty
+Contexts are able to access beans defined specifically in that context, or in any parent contexts.
 
-TODO: Spring service layer
+### 3) Jetty & Karaf
 
-#### 4) Karaf
+The service entry in `service-configuration.xml` for Jetty looks like:
+```
+<service>
+   <name>OpenNMS:Name=JettyServer</name>
+   <class-name>org.opennms.netmgt.jetty.jmx.JettyServer</class-name>
+   <invoke method="init" pass="0" at="start"/>
+   <invoke method="start" pass="1" at="start"/>
+   <invoke method="status" pass="0" at="status"/>
+   <invoke method="stop" pass="0" at="stop"/>
+</service>
+```
 
+On start, this class loads the `jettyServerContext` which fires up Jetty and launches any web applications found in `$OPENNMS_HOME/jetty-webapps/`.
 
+From `jetty-webapps/opennms/WEB-INF/web.xml`:
+```
+<listener>
+   <listener-class>org.opennms.container.web.WebAppListener</listener-class>
+</listener>
 
+<listener>
+   <listener-class>org.apache.felix.http.proxy.ProxyListener</listener-class>
+</listener>
+```
 
+The `org.opennms.container.web.WebAppListener#contextInitialized` is called when the web application is initialized, and the following code starts Karaf via the `org.apache.karaf.main.Main` class:
+```
+System.setProperty("karaf.startRemoteShell", "true");
+System.setProperty("karaf.lock", "false");
+main = new Main(new String[0]);
+main.launch();
+```
 
 ## JVM Components
 
