@@ -86,7 +86,13 @@ The call to `BeanUtils#getFactory` ends up loading the `eventDaemonContext` defi
 The hiearchy of Spring contexts looks like:
 ![comprehensive](images/spring-context-dep-graph.png)
 
+TODO: Add `...` that depends on daoContext
+TODO: Identify as parent contexts
+
 Contexts are able to access beans defined specifically in that context, or in any parent contexts.
+
+> When a context is loaded, it's parents will be recursively loaded, which means that a large part of the initialization will happen when the first daemon starts and loads an application context.
+
 
 ### 3) Jetty & Karaf
 
@@ -104,7 +110,7 @@ The service entry in `service-configuration.xml` for Jetty looks like:
 
 On start, this class loads the `jettyServerContext` which fires up Jetty and launches any web applications found in `$OPENNMS_HOME/jetty-webapps/`.
 
-From `jetty-webapps/opennms/WEB-INF/web.xml`:
+If we inspect the `web.xml` from the primary web application in `jetty-webapps/opennms/WEB-INF/web.xml` we find:
 ```
 <listener>
    <listener-class>org.opennms.container.web.WebAppListener</listener-class>
@@ -127,12 +133,13 @@ main.launch();
 
 ### Overview
 
+The primary components of the OpenNMS JVM are as follows:
+
 ![db schema](images/arch-jvm.png)
 
 ### JVM
 
 ### Spring
-
 
 TODO: Draw diagram that includes
 * JNI
@@ -146,18 +153,20 @@ TODO: Draw diagram that includes
 * Drools
 
 ## OSGi & Classloaders
-Root classloader
-Jetty
-OSGi
-Review meta-data
-Walk through OSGi bundle
-Meta-data
-Activator, Blueprint
+
+* Root classloader
+* Jetty
+* OSGi
+* Review meta-data in Manifest
+* Walk through OSGi bundle
+* Meta-data
+* Activator, Blueprint
 
 ## DAO Layer
 
-## Startup Process
-java -jar bootstrap
+* Hibernate
+* Connection polling
+* Shared w/ Sentinel
 
 ## Integration Tests
 

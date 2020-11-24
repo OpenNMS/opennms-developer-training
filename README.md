@@ -2,6 +2,11 @@
 
 These guides were built to give you the knowledge you need to set up a development environment and start developing new features with OpenNMS’ APIs.
 
+## Work in progress
+
+This documentation is actively being worked on.
+It is intended to be used as support material for instructor led training sessions.
+
 ## Target Audience
 
 You are familiar with Java, Docker and have some existing experience using OpenNMS.
@@ -17,7 +22,7 @@ You would like to integrate with OpenNMS and extend it to provide functionality 
 ## Modules
 
 Some more are complete, whereas others contain nothing but notes:
-1. :sunny: - complete
+1. :sunny: - ready
 1. :fire: - work in progress
 1. :cloud: - brainstorming
 
@@ -47,7 +52,7 @@ Data models and internals
 1. [Events](docs/model/02-events.md) :cloud: 
 1. [Alarms](docs/model/03-alarms.md) :cloud:
 1. [Time Series](docs/model/04-timeseries.md) :cloud:
-1. [Flows](docs/model/05-flows.md) :cloud:
+1. [Flows](docs/model/05-flows.md) :fire:
 1. [Links](docs/model/06-links.md) :cloud:
 
 ### Use Cases

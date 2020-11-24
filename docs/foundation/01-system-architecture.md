@@ -6,7 +6,8 @@ Understand the function of the different services in the OpenNMS platform and ho
 
 ## Components
 
-Here is a what is refered to as the Comprehensive Archictecture. It shows all of the components deployed in a common enterprise environment:
+Here is a what is refered to as the Comprehensive Archictecture.
+It shows all of the components deployed in a common enterprise environment:
 
 ![comprehensive](images/arch-comprehensive.png)
 
@@ -32,15 +33,16 @@ Allows the OpenNMS instance to access remote networks.
 
 Can be used to scale processing of inbound messages.
 
-For active checks where the Minion must initiate the connection, the scheduling is done on the core and triggered in the Minion via a remote procedure call (RPC).
+For active checks where the Minion must initiate the connection the scheduling is done on the core.
+Checks are triggered on the Minion via a remote procedure call (RPC).
 
 #### Sentinel
 
 Used to scale and offload processing of specific workloads from the core.
 
-Currently supports processing streaming telemetry, thresholding on streaming telemtry and flows.
+Currently supports processing streaming telemetry, thresholding on streaming telemetry and flows.
 
-Sentinel is also the target container for scaling other workloads in the future.
+> Unlike Minion, we assume that Sentinel has access to the database and other services used by the core.
 
 ### Supporting Services - Storage
 
@@ -92,7 +94,8 @@ Details about inter process communication (IPC) is covered in the IPC module.
 
 ActiveMQ can be used as a message bus between OpenNMS & Minion.
 
-An instance of ActiveMQ is embedded in the OpenNMS JVM to facilate setup on small installs, however we generally recommend an external ActiveMQ server/cluster or an alternative such as Kafka is used for large installs.
+An instance of ActiveMQ is embedded in the OpenNMS JVM to facilate setup on small installs.
+We generally recommend an external ActiveMQ server/cluster or an alternative such as Kafka for large installs.
 
 ### Supporting Services - Other
 
@@ -122,7 +125,7 @@ In the simplest form OpenNMS only requires PostgreSQL:
 
 ### Minion w/ Kafka
 
-We can introduct Minion and Kafka if we want to monitor remote networks:
+We can introduce Minion and Kafka if we want to monitor remote networks:
 
 ![minion kafka arch](images/arch-minion-kafka.png)
 
@@ -142,7 +145,7 @@ Here's another architecture view for a distributed deployment of [ALEC](https://
 
 ## Lab
 
-> Here we show to to stand up a stack with some Minions & sample data
+> Here we show how to stand up a stack with some Minions & sample data
 
 Start services:
 ```
