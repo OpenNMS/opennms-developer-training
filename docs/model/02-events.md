@@ -2,6 +2,8 @@
 
 ## Goal
 
+Understand how events are modeled, how eventd works and what APIs used used to send and receive events.
+
 ## Lecture
 
 ![eventd](images/eventd.png)

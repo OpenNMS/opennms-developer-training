@@ -129,11 +129,44 @@ main = new Main(new String[0]);
 main.launch();
 ```
 
+Karaf will go through its own startup process and load the features defined in [./etc/org.apache.karaf.features.cfg](https://github.com/OpenNMS/opennms/blob/opennms-26.2.2-1/container/karaf/src/main/filtered-resources/etc/org.apache.karaf.features.cfg#L64).
+These include:
+```
+datachoices, \
+opennms-activemq-shell, \
+opennms-collection-commands, \
+opennms-core-ipc-rpc-commands, \
+opennms-core-ipc-kafka-shell, \
+opennms-dhcpd, \
+opennms-events-commands, \
+opennms-send-event-command, \
+opennms-identity, \
+opennms-icmp-commands, \
+opennms-snmp-commands, \
+opennms-telemetry-collection,\
+opennms-telemetry-bmp,\
+opennms-telemetry-jti,\
+opennms-telemetry-nxos,\
+opennms-telemetry-graphite,\
+opennms-telemetry-openconfig, \
+opennms-dnsresolver-shell,\
+opennms-dnsresolver-netty,\
+opennms-flows,\
+opennms-topology-runtime-browsers,\
+opennms-topology-runtime-linkd,\
+```
+
+Features are defined in XML and may contain references to other features or bundles (JARs with additional OSGi meta-data) - see [features.xml](https://github.com/OpenNMS/opennms/blob/opennms-26.2.2-1/container/features/src/main/resources/features.xml#L1462).
+The Karaf container is made aware of feature by defining [feature repository entries](https://github.com/OpenNMS/opennms/blob/opennms-26.2.2-1/container/karaf/src/main/filtered-resources/etc/org.apache.karaf.features.cfg#L38).
+
+When a feature is loaded, all its dependent features and bundles are loaded.
+Bundles may use [activators](https://github.com/OpenNMS/opennms/blob/opennms-26.2.2-1/container/spring-extender/pom.xml#L26) or [blueprints](https://github.com/OpenNMS/opennms/blob/opennms-26.2.2-1/features/flows/elastic/src/main/resources/OSGI-INF/blueprint/blueprint.xml#L70) to perform additional wiring or logic when loaded.
+
 ## JVM Components
 
 ### Overview
 
-The primary components of the OpenNMS JVM are as follows:
+The building block of the OpenNMS JVM are:
 
 ![db schema](images/arch-jvm.png)
 
