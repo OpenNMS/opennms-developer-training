@@ -1,9 +1,10 @@
 digraph G {
  
-  commonContext -> soaContext;
+  commonContext -> soaContext [label="parent"];
   daemonContext -> commonContext;
   daoContext -> daemonContext;
   eventDaemonContext -> daoContext;
+  otherDaemonContext -> daoContext;
   pollerConfigContext -> daoContext;
   thresholdingContext -> pollerConfigContext;
   collectdContext -> thresholdingContext;
@@ -13,6 +14,7 @@ digraph G {
   queuedContext -> daoContext;
   webContext -> thresholdingContext;
   
+  otherDaemonContext [shape=box, label="..."];
   eventDaemonContext [shape=box];
   collectdContext [shape=box];
   notifdContext [shape=box];
@@ -20,5 +22,12 @@ digraph G {
   statisticsDaemonContext [shape=box];
   queuedContext [shape=box];
   webContext [shape=diamond];
+
+  subgraph cluster {
+    label = "Legend";
+    daemon [shape=box, label="Daemon"];
+    generic [label="Generic"];
+    web [shape=diamond, label="Web"];
+  }
 
 }

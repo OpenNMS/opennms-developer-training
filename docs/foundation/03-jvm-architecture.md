@@ -86,9 +86,6 @@ The call to `BeanUtils#getFactory` ends up loading the `eventDaemonContext` defi
 The hiearchy of Spring contexts looks like:
 ![comprehensive](images/spring-context-dep-graph.png)
 
-TODO: Add `...` that depends on daoContext
-TODO: Identify as parent contexts
-
 Contexts are able to access beans defined specifically in that context, or in any parent contexts.
 
 > When a context is loaded, it's parents will be recursively loaded, which means that a large part of the initialization will happen when the first daemon starts and loads an application context.
