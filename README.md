@@ -32,7 +32,7 @@ Base concepts & developments
 
 1. [System Architecture](docs/foundation/01-system-architecture.md) :sunny:
 1. [Local development](docs/foundation/02-local-development.md) :sunny:
-1. [JVM Architecture](docs/foundation/03-jvm-architecture.md) :fire:
+1. [JVM Architecture](docs/foundation/03-jvm-architecture.md) :sunny:
 1. [Inter Process Communication (IPC)](docs/foundation/04-ipcs.md) :cloud:
 
 ### APIs
