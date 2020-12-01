@@ -4,13 +4,82 @@
 
 Understand the architecture of the OpenNMS JVM.
 
-## Overview
+## Components
+
+### Overview
 
 The major components of the OpenNMS JVM are structured as follows:
 
 ![db schema](images/arch-jvm.png)
 
 The majority of services and functions developed before 2015 were in the form of "daemons", whereas much of the more modern code has been developed as "bundles".
+
+### Spring
+
+OpenNMS Horizon 26.2.2 uses [Spring 4.2.9](https://github.com/OpenNMS/opennms/blob/opennms-26.2.2-1/pom.xml#L1473) as an IoC container.
+The DAO layer, the daemons and most of the supporting services are wired through Spring contexts as demonstrated in the startup walkthrough bellow.
+
+### DAO Layer
+
+The DAO layer is a collection of beans and services used to access configuration files and interact with database entities.
+Each configuration file and database entity tends to have its own specific DAO interface.
+
+For database interaction we use Hibernate as an ORM, Spring for transaction management and [HikariCP](https://github.com/brettwooldridge/HikariCP) for connection pooling.
+Some legacy code uses direct SQL queries and does not leverage Hibernate entities.
+
+### Daemons
+
+Daemons are individual services provided the platform.
+Each daemon has its own definition in [service-configuration.xml](https://github.com/OpenNMS/opennms/blob/opennms-26.2.2-1/opennms-base-assembly/src/main/filtered/etc/service-configuration.xml), its own configuration, its own thread pools and its own schedulding mechanisms.
+
+Daemons tend to communicate with one another by sending events over the event bus (managed by the eventd daemon.)
+Shared service tend to be maintained in the DAO layer, but daemons can make services available globally by exposing them in the OSGi registry.
+
+Daemons include: eventd, pollerd, collectd, telemetryd, provisiond, discoveryd, etc...
+
+### Jetty
+
+The Jetty HTTP server is defined as a daemon, but is worth mentioning seperately since it hosts the web application, REST API, and is used to bootstrap Karaf.
+
+Jetty's configuration in pulled from the classpath by default, but can be overriden by defining `./etc/jetty.xml`.
+A copy of the default configuration is maintained in [./etc/examples/jetty.xml](https://github.com/OpenNMS/opennms/blob/opennms-26.2.2-1/opennms-jetty/src/main/resources/org/opennms/netmgt/jetty/jetty.xml).
+
+> Jetty can be configured to terminate SSL, or you can front Jetty with a reverse proxy.
+
+Web application are automatically loaded from `./jetty-webapps`.
+The REST API, static assets, servlets & JSPs are all served from the `opennms` web application.
+
+> Third-party applications like [hawtio](https://hawt.io/) can be easily deployed by dropping the `.war`, or extracting its contents in a new folder in `./jetty-webapps`.
+
+As mentioned in the startup process walkthrough bellow, the Karaf container is started when the `opennms` web application is initialized.
+
+### Web Application
+
+The web application is defined in the source tree in both the `opennms-webapp` and `opennms-webapp-rest` modules.
+The `web.xml` files and artifacts from these are merged at assembly time using our [warmerge plugin](https://github.com/OpenNMS/maven-plugins/tree/features-maven-plugin-1.3.2/opennms-warmerge-plugin).
+
+Spring Security is used to perform authentication and authentication in the web application.
+See [applicationContext-spring-security.xml](https://github.com/OpenNMS/opennms/blob/opennms-26.2.2-1/opennms-webapp/src/main/webapp/WEB-INF/applicationContext-spring-security.xml#L126) for details.
+
+### Karaf
+
+Horizon 26.2.2 uses [Karaf 4.2.6](https://github.com/OpenNMS/opennms/blob/opennms-26.2.2-1/pom.xml#L1415) as an OSGi container.
+In order to incorporate Karaf into our existing stack we have implemented some customizations to the default distribution.
+
+We have implemented a [custom service registry](https://github.com/OpenNMS/opennms/blob/opennms-26.2.2-1/core/soa/src/main/java/org/opennms/core/soa/support/OnmsOSGiBridgeActivator.java#L44) that allows services to be exposed or referenced between the OSGi registry and Spring contexts.
+We have implemented a [custom web bridge](https://github.com/OpenNMS/opennms/tree/opennms-26.2.2-1/container/web) that allows servlets, filters & JAX-RS annotated interfaces to be exposed from OSGi based services and made accessible through the existing `opennms` web application.
+We have a [custom JAAS provider](https://github.com/OpenNMS/opennms/blob/opennms-26.2.2-1/container/jaas-login-module/src/main/resources/OSGI-INF/blueprint/blueprint.xml#L13) that allows Karaf to use the same authentication subsystem that is used by the web application.
+We also make heavy use of Karaf shell commands for interacting with the system at runtime.
+
+### OSGi & Class Loaders
+
+Class loaders in the OpenNMS JVM are organized as follows:
+![comprehensive](images/jvm-classloaders.png)
+
+The system class loader contains all of the artifacts present in `$OPENNMS_HOME/lib`.
+Jetty create a seperate class loader for each web application.
+Karaf creates it's own system class laoder which exposes classes from the parent classloaders depending on whats configured in `jre.properties` and `custom.properties`.
+Each bundle has it's own class loader, which may be linked with or reference classes in other bundles using OSGi constructs.
 
 ## Startup Process
 
@@ -166,71 +235,3 @@ The Karaf container is made aware of feature by defining [feature repository ent
 
 When a feature is loaded, all its dependent features and bundles are loaded.
 Bundles may use [activators](https://github.com/OpenNMS/opennms/blob/opennms-26.2.2-1/container/spring-extender/pom.xml#L26) or [blueprints](https://github.com/OpenNMS/opennms/blob/opennms-26.2.2-1/features/flows/elastic/src/main/resources/OSGI-INF/blueprint/blueprint.xml#L70) to perform additional wiring or logic when loaded.
-
-## Components
-
-### Spring
-
-OpenNMS Horizon 26.2.2 uses [Spring 4.2.9](https://github.com/OpenNMS/opennms/blob/opennms-26.2.2-1/pom.xml#L1473) as an IoC container.
-The DAO layer, the daemons and most of the supporting services are wired through Spring contexts as demonstrated in the startup walkthrough.
-
-### DAO Layer
-
-The DAO layer is a collection of beans and services used to access configuration files and interact with database entities.
-Each configuration file and database entity tends to have its own specific DAO interface.
-
-For database interaction we use Hibernate as an ORM, Spring for transaction management and [HikariCP](https://github.com/brettwooldridge/HikariCP) for connection pooling.
-Some legacy code uses direct SQL queries and does not leverage Hibernate entities.
-
-### Daemons
-
-Daemons are individual services provided the platform.
-Each daemon has its own definition in [service-configuration.xml](https://github.com/OpenNMS/opennms/blob/opennms-26.2.2-1/opennms-base-assembly/src/main/filtered/etc/service-configuration.xml), its own configuration, its own thread pools and its own schedulding mechanisms.
-
-Daemons tend to communicate with one another by sending events over the event bus (managed by the eventd daemon.)
-Shared service tend to be maintained in the DAO layer, but daemons can make services available globally by exposing them in the OSGi registry.
-
-Daemons include: eventd, pollerd, collectd, telemetryd, provisiond, discoveryd, etc...
-
-### Jetty
-
-The Jetty HTTP server is defined as a daemon, but is worth mentioning seperately since it hosts the web application, REST API, and is used to bootstrap Karaf.
-
-Jetty's configuration in pulled from the classpath by default, but can be overriden by defining `./etc/jetty.xml`.
-A copy of the default configuration is maintained in [./etc/examples/jetty.xml](https://github.com/OpenNMS/opennms/blob/opennms-26.2.2-1/opennms-jetty/src/main/resources/org/opennms/netmgt/jetty/jetty.xml).
-
-> Jetty can be configured to terminate SSL, or you can front Jetty with a reverse proxy.
-
-Web application are automatically loaded from `./jetty-webapps`.
-The REST API, static assets, servlets & JSPs are all served from the `opennms` web application.
-
-> Third-party applications like [hawtio](https://hawt.io/) can be easily deployed by dropping the `.war`, or extracting its contents in a new folder in `./jetty-webapps`.
-
-As mentioned in the startup process walkthrough, the Karaf container is started when the `opennms` web application is initialized.
-
-### Web Application
-
-The web application is defined in the source tree in both the `opennms-webapp` and `opennms-webapp-rest` modules.
-The `web.xml` files and artifacts from these are merged at assembly time using our [warmerge plugin](https://github.com/OpenNMS/maven-plugins/tree/features-maven-plugin-1.3.2/opennms-warmerge-plugin).
-
-Spring Security is used to perform authentication and authentication in the web application.
-See [applicationContext-spring-security.xml](https://github.com/OpenNMS/opennms/blob/opennms-26.2.2-1/opennms-webapp/src/main/webapp/WEB-INF/applicationContext-spring-security.xml#L126) for details.
-
-### Karaf
-
-Horizon 26.2.2 uses [Karaf 4.2.6](https://github.com/OpenNMS/opennms/blob/opennms-26.2.2-1/pom.xml#L1415) as an OSGi container.
-In order to incorporate Karaf into our existing stack we have implemented some customizations to the default distribution.
-
-We have implemented a [custom service registry](https://github.com/OpenNMS/opennms/blob/opennms-26.2.2-1/core/soa/src/main/java/org/opennms/core/soa/support/OnmsOSGiBridgeActivator.java#L44) that allows services to be exposed or referenced between the OSGi registry and Spring contexts.
-We have implemented a [custom web bridge](https://github.com/OpenNMS/opennms/tree/opennms-26.2.2-1/container/web) that allows servlets, filters & JAX-RS annotated interfaces to be exposed from OSGi based services and made accessible through the existing `opennms` web application.
-We also have a [custom JAAS provider](https://github.com/OpenNMS/opennms/blob/opennms-26.2.2-1/container/jaas-login-module/src/main/resources/OSGI-INF/blueprint/blueprint.xml#L13) that allows Karaf to use the same authentication subsystem that is used by the web application.
-
-## OSGi & Class Loaders
-
-Class loaders in the OpenNMS JVM are organized as follows:
-![comprehensive](images/jvm-classloaders.png)
-
-The system class loader contains all of the artifacts present in `$OPENNMS_HOME/lib`.
-Jetty create a seperate class loader for each web application.
-Karaf creates it's own system class laoder which exposes classes from the parent classloaders depending on whats configured in `jre.properties` and `custom.properties`.
-Each bundle has it's own class loader, which may be linked with or reference classes in other bundles using OSGi constructs.

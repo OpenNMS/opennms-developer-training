@@ -2,11 +2,29 @@
 
 ## Goal
 
-Understand how the components of the stack communicate.
+Understand how the components of the stack communicate and how they can be secured.
 
-Understand how the communications are secured.
+## APIs
 
-### Sink API
+Processes currently communicate using two patterns:
+1) Remote procedure calls (RPCs)
+2) Sinks (for unsolicited messages)
+
+OpenNMS provides high level APIs for the RPC and Sink patterns.
+The APIs are implemented using different messaging subsystems including JMS (ActiveMQ), Kafka, Amazon SQS and gRPC.
+
+RPCs are used when triggering actions or active tests against NEs.
+For example, executing a monitor, collector, detector, ping, etc...
+The RPC API is intented to make it easy to invoke remote operations, abstracting whether or not they are local or remote.
+Depending on the location of the NE, the requests are dispatched to different queues or executed locallly.
+Here is an example where we execute a ping sweep at a remote location: [DiscoveryTaskExecutorImpl.java#L136](https://github.com/OpenNMS/opennms/blob/opennms-26.2.2-1/features/discovery/src/main/java/org/opennms/netmgt/discovery/DiscoveryTaskExecutorImpl.java#L136)
+
+Sinks are used for handling unsolicited messages from NEs that actively initiate connections.
+These include SNMP traps, Syslog, Netflow, BMP, etc...
+The Sink API is intented to make it easy to fire off messages, abstracting whether or not they are processed locally or remotely.
+Here is an example where Syslog messages are dispatched for processing after being received from the UDP socket: [SyslogReceiverCamelNettyImpl.java#L175](https://github.com/OpenNMS/opennms/blob/opennms-26.2.2-1/features/events/syslog/src/main/java/org/opennms/netmgt/syslogd/SyslogReceiverCamelNettyImpl.java#L175)
+
+## Sink API
 
 Overview
 The Sink API allows for code running within the context of either OpenNMS or Minion to forward unsolicited messages to one or more registered handlers. If running on a Minion, the messages are forwarded back to the OpenNMS instance before invoking the handlers, whereas the handlers are invoked directly when the messages are generated within the OpenNMS instance itself.
@@ -48,4 +66,4 @@ TODO: Using meta-data for TTL handling
 
 * Add a new RPC module
 * Add a new Sink module
-
+* Use RPC and Sink stress shell commands
