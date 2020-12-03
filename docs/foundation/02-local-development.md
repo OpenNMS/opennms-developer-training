@@ -11,7 +11,7 @@ Compile OpenNMS from source and perform remote debugging.
 
 We will walk through setting up a development environment using a new Ubuntu 20.04.1 LTS (Focal) virtual machine created using [Vagrant](https://www.vagrantup.com/).
 
-The remaining instructions asume that Vagrant is installed and that we are using [VirtualBox](https://www.virtualbox.org/) as the target hypervisor on the system.
+The remaining instructions assume that Vagrant is installed and that we are using [VirtualBox](https://www.virtualbox.org/) as the target hypervisor on the system.
 
 In order to install the VirtualBox Guest Additional automatically in the Vagrant VM, install the following plugin:
 ```
@@ -51,7 +51,7 @@ echo 'export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64' >> ~/.bashrc
 source ~/.bashrc
 ```
 
-Setup PostgreSQL:
+Set up PostgreSQL:
 ```
 sudo systemctl enable postgresql
 ```
@@ -72,7 +72,7 @@ Install Eclipse:
 sudo snap install --classic eclipse
 ```
 
-Setup Eclipse:
+Set up Eclipse:
 ```
 sudo cp /snap/eclipse/current/eclipse.ini /etc/eclipse.ini
 ```
@@ -124,7 +124,7 @@ tar zxvf opennms-26.2.2.tar.gz -C opennms-26.2.2
 ln -s opennms-26.2.2 opennms
 ```
 
-Setup helpers:
+Set up helpers:
 ```
 echo 'export OPENNMS_HOME=/home/vagrant/git/opennms/target/opennms' >> ~/.bashrc
 echo 'alias oh="cd $OPENNMS_HOME"' >> ~/.bashrc
@@ -154,7 +154,7 @@ Use this path `/home/vagrant/git/opennms/features/events`.
 
 > We only import a subset of the projects here for expediency.
 
-Once imported create a new launch configuration by selection `Run -> Debug Configuration`.
+Once imported, create a new launch configuration by selection `Run -> Debug Configuration`.
 
 Select `Remove Java Application` and click `New Launch Configuration`.
 
