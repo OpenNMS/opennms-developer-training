@@ -1,0 +1,33 @@
+digraph G {
+ 
+  commonContext -> soaContext [label="parent"];
+  daemonContext -> commonContext;
+  daoContext -> daemonContext;
+  eventDaemonContext -> daoContext;
+  otherDaemonContext -> daoContext;
+  pollerConfigContext -> daoContext;
+  thresholdingContext -> pollerConfigContext;
+  collectdContext -> thresholdingContext;
+  notifdContext -> pollerConfigContext;
+  pollerdContext -> thresholdingContext;
+  statisticsDaemonContext -> daoContext;
+  queuedContext -> daoContext;
+  webContext -> thresholdingContext;
+  
+  otherDaemonContext [shape=box, label="..."];
+  eventDaemonContext [shape=box];
+  collectdContext [shape=box];
+  notifdContext [shape=box];
+  pollerdContext [shape=box];
+  statisticsDaemonContext [shape=box];
+  queuedContext [shape=box];
+  webContext [shape=diamond];
+
+  subgraph cluster {
+    label = "Legend";
+    daemon [shape=box, label="Daemon"];
+    generic [label="Generic"];
+    web [shape=diamond, label="Web"];
+  }
+
+}
