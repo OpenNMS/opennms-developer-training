@@ -7,8 +7,8 @@ Understand the [ALEC (Architecture for Learning Enabled Correlation)](https://gi
 ## Links
 
 * Documentation: https://alec.opennms.com/alec/1.1.0/index.html
+* Presentation from All Things Open 2019: [Smart ALEC](assets/smart-alec-all-things-open-2019.pdf)
 * Groovy script used to generated inventory graph: https://github.com/OpenNMS/alec/blob/v1.1.1/datasource/opennms-direct/src/main/resources/inventory.groovy
-
 
 ## Demo
 
