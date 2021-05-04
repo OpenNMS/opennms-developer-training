@@ -29,3 +29,9 @@ Base concepts & developments
 1. [Local development](docs/foundation/02-local-development.md)
 1. [JVM Architecture](docs/foundation/03-jvm-architecture.md)
 1. [Inter Process Communication (IPC)](docs/foundation/04-ipcs.md)
+
+### Components
+
+Deep dive into specific components/features
+
+1. [Poller](docs/components/01-poller.md)

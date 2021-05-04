@@ -78,6 +78,8 @@ When a particular call occurs on a recurring schedule (i.e., invoke this monitor
 
 > Metadata can be used to define explicit TTLs on certain elements or services, while falling back to global defaults for other elements.
 
+> For additional details see [Time to Live (TTL) fo RPCs](https://docs.opennms.org/opennms/releases/27.1.1/guide-admin/guide-admin.html#ga-minion-ttl)
+
 ### JMS Implementation
 
 The JMS implementation performs bidirectional communication over request and reply queues.
