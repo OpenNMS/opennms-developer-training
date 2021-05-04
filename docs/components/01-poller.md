@@ -48,6 +48,6 @@ The `LocationAwarePollerClient` returns a future while the monitor is executed a
 Due to the original synchronous design and nature of the poller, the thread is blocked while waiting for the result of the poll.
 
 In the event that the monitor is not succesfully executed, due to interruption, TTL timeout, or some other error, then the existing state of the service is kept.
-As a result, if all of the Minions at a particular location go offline, then we expect the poller related threads for monitored services at this location to be blocked pending timeouts and for no outages to be reported.
+As a result, if all of the Minions at a particular location go offline, then we expect the poller related threads for monitored services at this location to be blocked pending timeouts and for no outages to be reported - see [PollableServiceConfig.java#L158](https://github.com/OpenNMS/opennms/blob/opennms-26.2.2-1/opennms-services/src/main/java/org/opennms/netmgt/poller/pollables/PollableServiceConfig.java#L158).
 
 > See [TTL Handling](../foundation/04-ipcs.md#ttl-handling) for additional details.
