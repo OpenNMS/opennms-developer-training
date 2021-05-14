@@ -85,10 +85,10 @@ Start Eclipse using menu icon.
 
 ### 3) Build OpenNMS
 
-Clone the source tree for Horizon 26.2.2:
+Clone the source tree for Horizon 28 Development:
 ```
 mkdir ~/git && cd ~/git
-git clone -b opennms-26.2.2-1 https://github.com/OpenNMS/opennms.git
+git clone -b release-28.x https://github.com/OpenNMS/opennms.git
 ```
 
 Open the following URL in Firefox and download the archive (1.4GB):
