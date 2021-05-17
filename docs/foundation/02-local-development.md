@@ -51,6 +51,13 @@ echo 'export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64' >> ~/.bashrc
 source ~/.bashrc
 ```
 
+If you are using version 28.x and up please install Java 11 and set your JAVA_HOME as follows:
+```
+sudo apt install openjdk-11-jdk
+echo 'export JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64' >> ~/.bashrc
+source ~/.bashrc
+```
+
 Set up PostgreSQL:
 ```
 sudo systemctl enable postgresql
@@ -85,9 +92,14 @@ Start Eclipse using menu icon.
 
 ### 3) Build OpenNMS
 
-Clone the source tree for Horizon 28 Development:
+Clone the source tree for Horizon 27.2.0 Release:
 ```
 mkdir ~/git && cd ~/git
+git clone -b opennms-27.2.0-1 https://github.com/OpenNMS/opennms.git
+```
+
+If you want to use latest development branch of a future release, please clone release-28.x:
+```
 git clone -b release-28.x https://github.com/OpenNMS/opennms.git
 ```
 
@@ -119,10 +131,11 @@ cd ~/git/opennms
 Extract the assembly:
 ```
 cd ~/git/opennms/target
-mkdir opennms-26.2.2
-tar zxvf opennms-26.2.2.tar.gz -C opennms-26.2.2
-ln -s opennms-26.2.2 opennms
+mkdir opennms-27.2.0
+tar zxvf opennms-27.2.0.tar.gz -C opennms-27.2.0
+ln -s opennms-27.2.0 opennms
 ```
+Note: If you cloned release-28.x branch, the name of the archive will be different
 
 Set up helpers:
 ```
