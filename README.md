@@ -17,7 +17,7 @@ You would like to integrate with OpenNMS and extend it to provide functionality 
 
 ## OpenNMS Details
 
-* Horizon 26.2.2 (or Meridian 2020.1.0)
+* Horizon 27.2.0 (or Meridian 2021.1.0)
 * Java 8 compile time, Java 11 runtime
 * PostgreSQL 12
 
